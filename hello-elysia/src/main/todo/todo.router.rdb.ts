@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { TodoHandler } from "~/main/todo/todo.handler";
+import { TodoHandlerRdbms as TodoHandler } from "~/main/todo/todo.handler.rdb";
 import { TodoModel } from "~/main/todo/todo.model";
 
 export const todoRouter = new Elysia({ prefix: "/todos" })
@@ -21,7 +21,6 @@ export const todoRouter = new Elysia({ prefix: "/todos" })
       params.id = Number(params.id);
     },
   })
-
   .post(
     "/",
     ({ set, body }) => {
@@ -31,33 +30,32 @@ export const todoRouter = new Elysia({ prefix: "/todos" })
     {
       detail: {
         tags: ["Todo"],
-        description:
-          "Todo 서비스를 제공하는 API입니다. 특정 body를 등록합니다.",
+        description: "Todo 서비스를 제공하는 API입니다. body를 등록합니다.",
       },
       body: "todo.todoDto",
     },
   )
   .patch("/:id", ({ params, body }) => TodoHandler.update(params.id, body), {
-    params: "todo.id",
-    transform({ params }) {
-      params.id = Number(params.id);
-    },
     detail: {
       tags: ["Todo"],
       description:
         "Todo 서비스를 제공하는 API입니다. 특정 ID를 통해 수정합니다.",
     },
-    body: "todo.todoDto",
-  })
-
-  .delete("/:id", ({ params }) => TodoHandler.remove(params.id), {
     params: "todo.id",
     transform({ params }) {
       params.id = Number(params.id);
     },
+    body: "todo.todoDto",
+  })
+
+  .delete("/:id", ({ params }) => TodoHandler.remove(params.id), {
     detail: {
       tags: ["Todo"],
       description:
         "Todo 서비스를 제공하는 API입니다. 특정 ID를 통해 삭제합니다.",
+    },
+    params: "todo.id",
+    transform({ params }) {
+      params.id = Number(params.id);
     },
   });
